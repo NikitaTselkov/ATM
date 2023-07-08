@@ -1,4 +1,5 @@
-﻿using Core;
+﻿using ATM.Models;
+using Core;
 using Prism.Commands;
 using Prism.Mvvm;
 using Prism.Regions;
@@ -10,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace ATM.ViewModels.Pages
 {
-    public class MainPageViewModel : BindableBase
+    public class MainPageViewModel : ViewModelBase
     {
         private readonly IRegionManager _regionManager;
 
@@ -32,7 +33,17 @@ namespace ATM.ViewModels.Pages
             if (string.IsNullOrEmpty(navigationPath))
                 throw new ArgumentNullException();
 
-            _regionManager.RequestNavigate(RegionNames.MainPage, navigationPath);
+            var param = new NavigationParameters();
+
+            if (UserAuthorization.IsUsersCardAuthorized())
+            {
+                _regionManager.RequestNavigate(RegionNames.MainPage, navigationPath);
+            }
+            else
+            {
+                param.Add("nextLink", navigationPath);
+                _regionManager.RequestNavigate(RegionNames.MainPage, PageNames.AutorizationPage, param);
+            }
         }
     }
 }

@@ -8,21 +8,26 @@ namespace ATM.Models
 {
     public static class UserAuthorization
     {
-        public static CardOfUser AutorizatedUsersCard { get; private set; }
+        private static CardOfUser _autorizatedUsersCard;
 
-        public static CardOfUser AutorizationOfUsersCard()
+        public static CardOfUser AutorizationOfUsersCard(long number, short passwprd)
         {
-            var user = new CardOfUser(1253453633, 3245);
-            user.SetMoneyToUsersCard(53245);
+            var user = new CardOfUser(number, passwprd);
+            user.SetMoneyToUsersCard(new Random().Next(10, 1000000));
 
-            AutorizatedUsersCard = user;
+            _autorizatedUsersCard = user;
 
             return user;
         }
 
+        public static double GetBalance()
+        {
+            return _autorizatedUsersCard.Balance;
+        }
+
         public static bool IsUsersCardAuthorized()
         {
-            return true;
+            return _autorizatedUsersCard is not null;
         }
     }
 }

@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace ATM.ViewModels.Pages
 {
-    public class BalancePageViewModel : BindableBase
+    public class BalancePageViewModel : ViewModelBase
     {
         private readonly IRegionManager _regionManager;
 
@@ -23,7 +23,7 @@ namespace ATM.ViewModels.Pages
 
         #endregion
 
-        public int Balance => UserAuthorization.AutorizatedUsersCard.Balance;
+        public double Balance => UserAuthorization.GetBalance();
 
         public BalancePageViewModel(IRegionManager regionManager)
         {

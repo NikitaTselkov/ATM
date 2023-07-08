@@ -8,14 +8,19 @@ namespace ATM.Models
 {
     public class CardOfUser
     {
-        public int Number { get; init; }
-        public int Pincode { get; init; }
-        public int Balance { get; private set; }
+        public long Number { get; init; }
+        public short Pincode { get; init; }
+        public double Balance { get; private set; }
 
-        public CardOfUser(int number, int pincode)
+        public CardOfUser(long number, short pincode)
         {
+            var length = number.ToString().Length;
+
+            if (length > 16 || length < 16)
+                throw new FormatException();
+
             Number = number;
-            Pincode = pincode; //UserAuthorization.AutorizationOfUsersCard();
+            Pincode = pincode;
         }
 
         public void SetMoneyToUsersCard(int money)

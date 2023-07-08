@@ -13,5 +13,6 @@ namespace Core
         public const string WithdrawMoneyPage = "WithdrawMoneyPage";
         public const string ReplenishBalancePage = "ReplenishBalancePage";
         public const string CurrentStatePage = "CurrentStatePage";
+        public const string AutorizationPage = "AutorizationPage";
     }
 }

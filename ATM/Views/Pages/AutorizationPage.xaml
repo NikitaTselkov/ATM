@@ -1,0 +1,35 @@
+﻿<UserControl x:Class="ATM.Views.Pages.AutorizationPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:ATM.Views.Pages"
+      xmlns:behaviors="clr-namespace:ATM.Behaviors"
+      xmlns:coreBehaviors="clr-namespace:Core.Behaviors;assembly=Core"
+      mc:Ignorable="d" 
+      xmlns:prism="http://prismlibrary.com/" 
+      xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+      prism:ViewModelLocator.AutoWireViewModel="True"
+      d:DesignHeight="450" d:DesignWidth="800">
+
+    <i:Interaction.Triggers>
+        <coreBehaviors:RoutedEventTrigger RoutedEvent="behaviors:ParsePasswordBehavior.SendPassword">
+            <prism:InvokeCommandAction Command="{Binding CheckUsersCardAutorization}" />
+        </coreBehaviors:RoutedEventTrigger>
+    </i:Interaction.Triggers>
+
+    <Grid>
+
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+
+            <TextBlock Text="Enter password" FontSize="30" Margin="0 0 0 10" />
+            <PasswordBox x:Name="pwbBox" HorizontalContentAlignment="Center"  FontSize="30">
+                <i:Interaction.Behaviors>
+                    <behaviors:ParsePasswordBehavior />
+                </i:Interaction.Behaviors>
+            </PasswordBox>
+
+        </StackPanel>
+
+    </Grid>
+</UserControl>

@@ -25,6 +25,7 @@ namespace ATM.Modules
         {
             containerRegistry.RegisterForNavigation<MainPage>();
             containerRegistry.RegisterForNavigation<BalancePage>();
+            containerRegistry.RegisterForNavigation<AutorizationPage>();
         }
     }
 }

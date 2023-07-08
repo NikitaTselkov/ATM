@@ -18,7 +18,7 @@ namespace ATM.ViewModels
 
         public MainWindowViewModel()
         {
-            UserAuthorization.AutorizationOfUsersCard();
+
         }
 
     }
