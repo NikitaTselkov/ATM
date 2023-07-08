@@ -1,6 +1,7 @@
 ﻿using Core;
 using Microsoft.Xaml.Behaviors;
 using System;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -42,6 +43,11 @@ namespace ATM.Behaviors
 
         private void PasswordChanged(object sender, RoutedEventArgs e)
         {
+            if (!char.IsDigit(AssociatedObject.Password.LastOrDefault()) && AssociatedObject.Password.Length > 0)
+            {
+                AssociatedObject.Password = AssociatedObject.Password[..^1];
+            }
+
             if (AssociatedObject.SecurePassword.Length == 4)
             {
                 ((UIElement)sender)?.RaiseEvent(new SendPasswordEventArgs(AssociatedObject.SecurePassword, SendPasswordEvent));

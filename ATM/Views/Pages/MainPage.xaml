@@ -38,7 +38,7 @@
             </DockPanel>
 
             <DockPanel HorizontalAlignment="Center">
-                <Button Content="Replenish the balance" Command="{Binding NavigateCommand}" CommandParameter="{x:Static core:PageNames.ReplenishBalancePage}" />
+                <Button Content="Top up balance" Command="{Binding NavigateCommand}" CommandParameter="{x:Static core:PageNames.TopUpBalancePage}" />
                 <Button Content="Current State" Command="{Binding NavigateCommand}" CommandParameter="{x:Static core:PageNames.CurrentStatePage}" />
             </DockPanel>
 

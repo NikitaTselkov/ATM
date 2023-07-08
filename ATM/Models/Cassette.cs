@@ -7,7 +7,6 @@ namespace ATM.Models
 {
     public class Cassette
     // 4 - 6 в 1 кассете 2500 банкнот в каждую касету можно добавить касету только своего номинала
-    // Банкомат сохраняет информацию по каждой операции
     // Дополнительно банкомат пересчитывает все купюры перед выдачей
     {
         private Stack<Banknote> _banknotes;
@@ -37,7 +36,6 @@ namespace ATM.Models
         {
             Banknotes = banknotes;
         }
-
 
         public void AddBanknote(Banknote banknote)
         {

@@ -11,7 +11,7 @@ namespace Core
         public const string MainPage = "MainPage";
         public const string BalancePage = "BalancePage";
         public const string WithdrawMoneyPage = "WithdrawMoneyPage";
-        public const string ReplenishBalancePage = "ReplenishBalancePage";
+        public const string TopUpBalancePage = "TopUpBalancePage";
         public const string CurrentStatePage = "CurrentStatePage";
         public const string AutorizationPage = "AutorizationPage";
     }
