@@ -3,6 +3,7 @@ using Prism.Mvvm;
 using Prism.Regions;
 using System;
 using Core;
+using ATM.Models;
 
 namespace ATM.ViewModels
 {
@@ -17,7 +18,7 @@ namespace ATM.ViewModels
 
         public MainWindowViewModel()
         {
-
+            UserAuthorization.AutorizationOfUsersCard();
         }
 
     }

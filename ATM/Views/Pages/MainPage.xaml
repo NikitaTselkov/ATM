@@ -6,6 +6,7 @@
       xmlns:local="clr-namespace:ATM.Views"
       xmlns:prism="http://prismlibrary.com/"   
       prism:ViewModelLocator.AutoWireViewModel="True"
+      xmlns:core="clr-namespace:Core;assembly=Core"
       mc:Ignorable="d" 
       d:DesignHeight="350" d:DesignWidth="525">
 
@@ -31,14 +32,14 @@
 
         <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Center">
 
-            <DockPanel HorizontalAlignment="Stretch">
-                <Button Content="Find out the balance" Command="{Binding NavigateToBalancePageCommand}" CommandParameter="BalancePage" />
-                <Button Content="Withdraw money" />
+            <DockPanel HorizontalAlignment="Center">
+                <Button Content="Find out the balance" Command="{Binding NavigateCommand}" CommandParameter="{x:Static core:PageNames.BalancePage}" />
+                <Button Content="Withdraw money" Command="{Binding NavigateCommand}" CommandParameter="{x:Static core:PageNames.WithdrawMoneyPage}" />
             </DockPanel>
 
-            <DockPanel HorizontalAlignment="Stretch">
-                <Button Content="Replenish the balance" />
-                <Button Content="Current State" />
+            <DockPanel HorizontalAlignment="Center">
+                <Button Content="Replenish the balance" Command="{Binding NavigateCommand}" CommandParameter="{x:Static core:PageNames.ReplenishBalancePage}" />
+                <Button Content="Current State" Command="{Binding NavigateCommand}" CommandParameter="{x:Static core:PageNames.CurrentStatePage}" />
             </DockPanel>
 
         </StackPanel>

@@ -10,28 +10,29 @@ using System.Threading.Tasks;
 
 namespace ATM.ViewModels.Pages
 {
-    public class MainPageViewModel : ViewModelBase
+    public class MainPageViewModel : BindableBase
     {
-        private DelegateCommand<string> _navigateToBalancePageCommand;
         private readonly IRegionManager _regionManager;
 
-        public DelegateCommand<string> NavigateToBalancePageCommand =>
-            _navigateToBalancePageCommand ?? (_navigateToBalancePageCommand = new DelegateCommand<string>(ExecuteNavigateToBalancePageCommand));
+        #region Commands
 
+        private DelegateCommand<string> _navigateCommand;
+        public DelegateCommand<string> NavigateCommand =>
+            _navigateCommand ?? (_navigateCommand = new DelegateCommand<string>(ExecuteNavigateCommand));
 
-        public MainPageViewModel(IRegionManager regionManager, IApplicationCommands applicationCommands)
+        #endregion
+
+        public MainPageViewModel(IRegionManager regionManager)
         {
             _regionManager = regionManager;
-            applicationCommands.NavigateCommand.RegisterCommand(NavigateToBalancePageCommand);
         }
 
-
-        private void ExecuteNavigateToBalancePageCommand(string navigationPath)
+        private void ExecuteNavigateCommand(string navigationPath)
         {
             if (string.IsNullOrEmpty(navigationPath))
                 throw new ArgumentNullException();
 
-            _regionManager.RequestNavigate(RegionNames.MainPage, new Uri(navigationPath, UriKind.Relative));
+            _regionManager.RequestNavigate(RegionNames.MainPage, navigationPath);
         }
     }
 }
