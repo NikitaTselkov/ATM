@@ -1,7 +1,4 @@
-﻿using ATM.Views.Pages;
-using Core;
-using Prism.Regions;
-using System.Windows;
+﻿using System.Windows;
 
 namespace ATM.Views
 {
@@ -10,11 +7,9 @@ namespace ATM.Views
     /// </summary>
     public partial class MainWindow : Window
     {
-        public MainWindow(IRegionManager regionManager)
+        public MainWindow()
         {
             InitializeComponent();
-
-            regionManager.RegisterViewWithRegion(RegionNames.MainPage, typeof(MainPage));
         }
     }
 }

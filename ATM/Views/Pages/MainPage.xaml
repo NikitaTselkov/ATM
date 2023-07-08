@@ -5,9 +5,43 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:ATM.Views"
       xmlns:prism="http://prismlibrary.com/"   
-      prism:ViewModelLocator.AutoWireViewModel="True">
+      prism:ViewModelLocator.AutoWireViewModel="True"
+      mc:Ignorable="d" 
+      d:DesignHeight="350" d:DesignWidth="525">
 
-    <Grid Background="Orange" Width="200" Height="200">
+    <UserControl.Resources>
+
+        <Style TargetType="Button">
+            <Setter Property="Width" Value="200" />
+            <Setter Property="Height" Value="100" />
+            <Setter Property="FontSize" Value="20" />
+            <Setter Property="Margin" Value="20" />
+        </Style>
+        
+    </UserControl.Resources>
+    
+    <Grid Background="White">
+
+        <TextBlock
+            Text="What do you want to do"
+            FontSize="20"
+            Margin="10"
+            HorizontalAlignment="Center" 
+            />
+
+        <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Center">
+
+            <DockPanel HorizontalAlignment="Stretch">
+                <Button Content="Find out the balance" Command="{Binding NavigateToBalancePageCommand}" CommandParameter="BalancePage" />
+                <Button Content="Withdraw money" />
+            </DockPanel>
+
+            <DockPanel HorizontalAlignment="Stretch">
+                <Button Content="Replenish the balance" />
+                <Button Content="Current State" />
+            </DockPanel>
+
+        </StackPanel>
         
     </Grid>
 </UserControl>

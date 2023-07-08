@@ -9,5 +9,6 @@ namespace Core
     public static class RegionNames
     {
         public const string MainPage = "MainPage";
+        public const string BalancePage = "BalancePage";
     }
 }

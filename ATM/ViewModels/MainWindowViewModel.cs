@@ -15,27 +15,10 @@ namespace ATM.ViewModels
             set { SetProperty(ref _title, value); }
         }
 
-
-        private DelegateCommand<string> _navigateCommand;
-        private readonly IRegionManager _regionManager;
-
-        public DelegateCommand<string> NavigateCommand =>
-            _navigateCommand ?? (_navigateCommand = new DelegateCommand<string>(ExecuteNavigateCommand));
-
-
-        public MainWindowViewModel(IRegionManager regionManager, IApplicationCommands applicationCommands)
+        public MainWindowViewModel()
         {
-            _regionManager = regionManager;
-            applicationCommands.NavigateCommand.RegisterCommand(NavigateCommand);
+
         }
 
-
-        private void ExecuteNavigateCommand(string navigationPath)
-        {
-            if (string.IsNullOrEmpty(navigationPath))
-                throw new ArgumentNullException();
-
-            _regionManager.RequestNavigate(RegionNames.MainPage, navigationPath);
-        }
     }
 }

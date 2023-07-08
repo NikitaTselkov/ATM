@@ -1,4 +1,5 @@
 ﻿using Core;
+using Prism.Commands;
 using Prism.Mvvm;
 using Prism.Regions;
 using System;
@@ -9,20 +10,28 @@ using System.Threading.Tasks;
 
 namespace ATM.ViewModels.Pages
 {
-    public class MainPageViewModel : BindableBase
+    public class MainPageViewModel : ViewModelBase
     {
-        //private readonly InteractionRequest<Confirmation> confirmExitInteractionRequest;
+        private DelegateCommand<string> _navigateToBalancePageCommand;
+        private readonly IRegionManager _regionManager;
 
-        //public MainPageViewModel(IEmailService emailService)
-        //{
+        public DelegateCommand<string> NavigateToBalancePageCommand =>
+            _navigateToBalancePageCommand ?? (_navigateToBalancePageCommand = new DelegateCommand<string>(ExecuteNavigateToBalancePageCommand));
 
-        //    this.confirmExitInteractionRequest = new InteractionRequest<Confirmation>();
-        //}
 
-        //public IInteractionRequest ConfirmExitInteractionRequest
-        //{
-        //    get { return this.confirmExitInteractionRequest; }
-        //}
+        public MainPageViewModel(IRegionManager regionManager, IApplicationCommands applicationCommands)
+        {
+            _regionManager = regionManager;
+            applicationCommands.NavigateCommand.RegisterCommand(NavigateToBalancePageCommand);
+        }
 
+
+        private void ExecuteNavigateToBalancePageCommand(string navigationPath)
+        {
+            if (string.IsNullOrEmpty(navigationPath))
+                throw new ArgumentNullException();
+
+            _regionManager.RequestNavigate(RegionNames.MainPage, new Uri(navigationPath, UriKind.Relative));
+        }
     }
 }
