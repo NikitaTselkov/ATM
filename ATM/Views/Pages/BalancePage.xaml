@@ -15,7 +15,7 @@
 
         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
 
-            <TextBlock Text="{Binding StringFormat=Your balance is {0} рублей, Path=Balance}" FontSize="25" />
+            <TextBlock Text="{Binding StringFormat=Your balance is {0} rub, Path=Balance}" FontSize="25" />
             
         </StackPanel>
         

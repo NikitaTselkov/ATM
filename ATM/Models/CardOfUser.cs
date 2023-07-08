@@ -10,7 +10,7 @@ namespace ATM.Models
     {
         public long Number { get; init; }
         public short Pincode { get; init; }
-        public double Balance { get; private set; }
+        public decimal Balance { get; private set; }
 
         public CardOfUser(long number, short pincode)
         {
@@ -23,7 +23,7 @@ namespace ATM.Models
             Pincode = pincode;
         }
 
-        public void SetMoneyToUsersCard(int money)
+        public void SetMoneyToUsersCard(decimal money)
         {
             Balance += money;
         }

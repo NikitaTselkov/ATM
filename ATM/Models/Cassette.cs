@@ -5,7 +5,7 @@ using System.Text;
 
 namespace ATM.Models
 {
-    public sealed class Cassette
+    public class Cassette
     // 4 - 6 в 1 кассете 2500 банкнот в каждую касету можно добавить касету только своего номинала
     // Банкомат сохраняет информацию по каждой операции
     // Дополнительно банкомат пересчитывает все купюры перед выдачей
@@ -26,7 +26,7 @@ namespace ATM.Models
         public int CountOfBanknotes
         {
             get { return _countOfBanknotes; }
-            private set { _countOfBanknotes = Banknotes.Count; }
+            private set { _countOfBanknotes = value; }
         }
 
 
@@ -41,14 +41,21 @@ namespace ATM.Models
 
         public void AddBanknote(Banknote banknote)
         {
+            if (Banknotes is null)
+                Banknotes = new Stack<Banknote>();
+
             if (Banknotes.Count > 0 && Banknotes.First().Denomination != banknote.Denomination)
                 throw new FormatException("Banknotes must be of the same denomination");
 
             Banknotes.Push(banknote);
+            CountOfBanknotes++;
         }
 
         public void RemoveBanknote(int countOfBanknotes)
         {
+            if (Banknotes is null)
+                Banknotes = new Stack<Banknote>();
+
             if (countOfBanknotes < 0)
                 throw new ArgumentOutOfRangeException("countOfBanknotes cannot be less than 0");
 
@@ -56,7 +63,10 @@ namespace ATM.Models
                 throw new ArgumentOutOfRangeException("Not enough banknotes to dispense");
 
             for (int i = 0; i < countOfBanknotes; i++)
+            {
                 Banknotes.Pop();
+                CountOfBanknotes--;
+            }
         }
 
     }

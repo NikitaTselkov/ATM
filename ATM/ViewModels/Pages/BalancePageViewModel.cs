@@ -23,7 +23,7 @@ namespace ATM.ViewModels.Pages
 
         #endregion
 
-        public double Balance => UserAuthorization.GetBalance();
+        public decimal Balance => UserAuthorization.GetBalance();
 
         public BalancePageViewModel(IRegionManager regionManager)
         {
