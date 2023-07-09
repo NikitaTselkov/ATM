@@ -25,7 +25,7 @@ namespace ATM.Models
             return _autorizatedUsersCard;
         }
 
-        public static decimal GetBalance()
+        public static long GetBalance()
         {
             return _autorizatedUsersCard.Balance;
         }

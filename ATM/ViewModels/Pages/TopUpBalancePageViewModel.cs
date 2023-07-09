@@ -25,10 +25,14 @@ namespace ATM.ViewModels.Pages
         public DelegateCommand TopUpBalanceCommand =>
             _topUpBalanceCommand ?? (_topUpBalanceCommand = new DelegateCommand(ExecuteTopUpBalanceCommand));
 
+        private DelegateCommand _loadedCommand;
+        public DelegateCommand LoadedCommand =>
+            _loadedCommand ?? (_loadedCommand = new DelegateCommand(ExecuteLoadedCommand));
+
         #endregion
 
-        private decimal _balance = UserAuthorization.GetBalance();
-        public decimal Balance
+        private long _balance = UserAuthorization.GetBalance();
+        public long Balance
         {
             get { return _balance; }
             set { SetProperty(ref _balance, value); }
@@ -51,6 +55,11 @@ namespace ATM.ViewModels.Pages
         private void ExecuteNavigateBackCommand()
         {
             _regionManager.RequestNavigate(RegionNames.MainPage, PageNames.MainPage);
+        }
+
+        private void ExecuteLoadedCommand()
+        {
+            Balance = UserAuthorization.GetBalance();
         }
 
         private void ExecuteTopUpBalanceCommand()

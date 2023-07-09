@@ -21,9 +21,18 @@ namespace ATM.ViewModels.Pages
         public DelegateCommand NavigateBackCommand =>
             _navigateBackCommand ?? (_navigateBackCommand = new DelegateCommand(ExecuteNavigateBackCommand));
 
+        private DelegateCommand _loadedCommand;
+        public DelegateCommand LoadedCommand =>
+            _loadedCommand ?? (_loadedCommand = new DelegateCommand(ExecuteLoadedCommand));
+
         #endregion
 
-        public decimal Balance => UserAuthorization.GetBalance();
+        private long _balance;
+        public long Balance
+        {
+            get { return _balance; }
+            set { SetProperty(ref _balance, value); }
+        }
 
         public BalancePageViewModel(IRegionManager regionManager)
         {
@@ -33,6 +42,11 @@ namespace ATM.ViewModels.Pages
         private void ExecuteNavigateBackCommand()
         {
             _regionManager.RequestNavigate(RegionNames.MainPage, PageNames.MainPage);
+        }
+
+        private void ExecuteLoadedCommand()
+        {
+            Balance = UserAuthorization.GetBalance();
         }
     }
 }

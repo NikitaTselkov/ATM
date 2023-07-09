@@ -116,7 +116,8 @@ namespace ATM.Models
 
             foreach (var cassette in Cassettes)
             {
-                result += cassette.Banknotes.Peek().Denomination * cassette.CountOfBanknotes;
+                if(cassette.CountOfBanknotes > 0)
+                    result += cassette.Banknotes.Peek().Denomination * cassette.CountOfBanknotes;
             }
 
             return result;
