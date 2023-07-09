@@ -8,6 +8,7 @@
              xmlns:prism="http://prismlibrary.com/"
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:coreBehaviors="clr-namespace:Core.Behaviors;assembly=Core"
+             xmlns:coreValidators="clr-namespace:Core.Validators;assembly=Core"
              prism:ViewModelLocator.AutoWireViewModel="True" 
              d:DesignHeight="350" d:DesignWidth="525">
 
@@ -22,11 +23,21 @@
 
         <Button Style="{StaticResource NavigateBackButton}" Command="{Binding NavigateBackCommand}" />
 
+        <TextBlock Text="{Binding StringFormat=Balance of ATM is {0} rub, Path=BalanceOfATM}" FontSize="14" Margin="10" HorizontalAlignment="Right" VerticalAlignment="Top" />
+
         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
 
             <TextBlock Text="{Binding StringFormat=Your balance is {0} rub, Path=Balance}" FontSize="25" />
 
-            <TextBox Height="30" Text="{Binding WithdrawalAmount}" FontSize="20" TextAlignment="Center" />
+            <TextBox Height="30" FontSize="20" TextAlignment="Center">
+                <TextBox.Text>
+                    <Binding Path="WithdrawalAmount" UpdateSourceTrigger="PropertyChanged">
+                        <Binding.ValidationRules>
+                            <coreValidators:InputNumsValidationRule />
+                        </Binding.ValidationRules>
+                    </Binding>
+                </TextBox.Text>
+            </TextBox>
 
             <Button Command="{Binding WithdrawMoneyCommand}" Margin="0 20 0 0" Height="60" Width="200" Content="Withdraw money" FontSize="20" />
 

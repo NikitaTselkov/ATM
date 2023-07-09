@@ -2,6 +2,7 @@
 using Microsoft.Xaml.Behaviors;
 using System;
 using System.Linq;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -46,12 +47,19 @@ namespace ATM.Behaviors
             if (!char.IsDigit(AssociatedObject.Password.LastOrDefault()) && AssociatedObject.Password.Length > 0)
             {
                 AssociatedObject.Password = AssociatedObject.Password[..^1];
+                SetSelection(AssociatedObject, AssociatedObject.Password.Length, 0);
+                AssociatedObject.Focus();
             }
 
             if (AssociatedObject.SecurePassword.Length == 4)
             {
                 ((UIElement)sender)?.RaiseEvent(new SendPasswordEventArgs(AssociatedObject.SecurePassword, SendPasswordEvent));
             }
+        }
+
+        private static void SetSelection(PasswordBox passwordBox, int start, int length)
+        {
+            passwordBox.GetType().GetMethod("Select", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(passwordBox, new object[] { start, length });
         }
     }
 }

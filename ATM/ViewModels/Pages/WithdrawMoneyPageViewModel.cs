@@ -31,11 +31,18 @@ namespace ATM.ViewModels.Pages
 
         #endregion
 
-        private long _balance = UserAuthorization.GetBalance();
+        private long _balance;
         public long Balance
         {
             get { return _balance; }
             set { SetProperty(ref _balance, value); }
+        }
+
+        private long _balanceOfATM;
+        public long BalanceOfATM
+        {
+            get { return _balanceOfATM; }
+            set { SetProperty(ref _balanceOfATM, value); }
         }
 
         private long _withdrawalAmount;
@@ -67,6 +74,7 @@ namespace ATM.ViewModels.Pages
         private void ExecuteLoadedCommand()
         {
             Balance = UserAuthorization.GetBalance();
+            BalanceOfATM = ATMStateModel.GetAllMoney();
         }
 
         private void ExecuteWithdrawMoneyCommand()
@@ -87,9 +95,13 @@ namespace ATM.ViewModels.Pages
                 if (selectedDenomination == 0)
                 {
                     var banknotes = ATMStateModel.ConvertSumToBanknotes(WithdrawalAmount);
-                    banknotes.ForEach(f => ATMStateModel.RemoveBanknoteByDenomination(f.Denomination));
+                    foreach (var item in banknotes)
+                    {
+                        for (int i = 0; i < item.CountOfBanknotes; i++)
+                            ATMStateModel.RemoveBanknoteByDenomination(item.Denomination);
+                    }
                 }
-                else if (ATMStateModel.IsDenominationsExist(selectedDenomination.Value))
+                else if (ATMStateModel.IsDenominationsExist(selectedDenomination.Value) && ATMStateModel.IsDenominationsEnough(selectedDenomination.Value, WithdrawalAmount))
                 {
                     var withdrawalAmount = WithdrawalAmount;
                     while (withdrawalAmount >= 50)
@@ -102,6 +114,7 @@ namespace ATM.ViewModels.Pages
                     throw new Exception($"There are no banknotes with denominations of {selectedDenomination.Value}");
 
                 Balance = UserAuthorization.GetBalance();
+                BalanceOfATM = ATMStateModel.GetAllMoney();
             }
             catch (Exception e)
             {

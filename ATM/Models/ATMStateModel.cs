@@ -1,9 +1,7 @@
-﻿using System;
+﻿using ATM.DataBase;
+using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ATM.Models
 {
@@ -37,78 +35,13 @@ namespace ATM.Models
 
         public static int CountOfCassettes => Cassettes.Count;
 
+        private const int _maxCountOfCassettes = 6;
 
         static ATMStateModel()
         {
-            //TODO: Получать данные из DB
-
-            Cassettes = new Stack<Cassette>();
-
-            FillCassettesRandomData();
-
-            _countAndDenominationOfBanknotes = GetCountAndDenominationOfBanknotes(); 
+            Cassettes = new Stack<Cassette>(DataBaseControll.GetCassettes());
+            _countAndDenominationOfBanknotes = DataBaseControll.GetCountAndDenominationOfBanknotes().ToList();
         }
-
-        #region Удалить
-
-        public static List<CassettesInfo> GetCountAndDenominationOfBanknotes()
-        {
-            var cassettes = new List<CassettesInfo>();
-
-            foreach (var cassette in Cassettes)
-            {
-                cassettes.Add(new CassettesInfo { Denomination = cassette.DenominationOfBanknotes, CountOfBanknotes = cassette.CountOfBanknotes });
-            }
-
-            return cassettes;
-        }
-
-        private static void FillCassettesRandomData()
-        {
-            var t = 0;
-
-            for (int i = 0; i < 6; i++)
-            {
-                var cassette = new Cassette(new Stack<Banknote>());
-
-                if (t == 0)
-                {
-                    t = 50;
-                }
-                else if (t == 50)
-                {
-                    t = 100;
-                }
-                else if (t == 100)
-                {
-                    t = 500;
-                }
-                else if (t == 500)
-                {
-                    t = 1000;
-                }
-                else if (t == 1000)
-                {
-                    t = 2000;
-                }
-                else if (t == 2000)
-                {
-                    t = 5000;
-                }
-
-                for (int j = 0; j < new Random().Next(1000, 2500); j++)
-                {
-                    cassette.AddBanknote(new Banknote(t));
-                }
-
-
-                Cassettes.Push(cassette);
-            }
-        }
-
-#endregion
-
-        private const int _maxCountOfCassettes = 6;
 
         public static long GetAllMoney()
         {
@@ -172,10 +105,18 @@ namespace ATM.Models
                     cassett.RemoveBanknote(1);
                     var userCard = UserAuthorization.GetAutorizatedCard();
                     userCard.RemoveMoneyFromUsersCard(denomination);
-                    _countAndDenominationOfBanknotes = GetCountAndDenominationOfBanknotes();
+                    _countAndDenominationOfBanknotes = DataBaseControll.GetCountAndDenominationOfBanknotes().ToList();
+                    DataBaseControll.DeleteCassettes(denomination);
                     break;
                 }
             }
+        }
+
+        public static bool IsDenominationsEnough(int denomination, long sum)
+        {
+            var tmp = _countAndDenominationOfBanknotes.First(f => f.Denomination == denomination);
+
+            return tmp.Denomination * tmp.CountOfBanknotes >= sum;
         }
 
         public static bool IsDenominationsExist(int denomination)
@@ -186,7 +127,7 @@ namespace ATM.Models
         public static List<CassettesInfo> ConvertSumToBanknotes(long sum)
         {
             if(_countAndDenominationOfBanknotes.Count == 0)
-                _countAndDenominationOfBanknotes = GetCountAndDenominationOfBanknotes();
+                _countAndDenominationOfBanknotes = DataBaseControll.GetCountAndDenominationOfBanknotes().ToList();
 
             var denominations = new HashSet<int>();
             denominations.Add(5000);
