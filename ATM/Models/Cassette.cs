@@ -7,7 +7,7 @@ namespace ATM.Models
 {
     public class Cassette
     {
-        private Stack<Banknote> _banknotes;
+        private Stack<Banknote> _banknotes = new Stack<Banknote>();
         public Stack<Banknote> Banknotes
         {
             get { return _banknotes; }
@@ -30,7 +30,7 @@ namespace ATM.Models
         public int DenominationOfBanknotes
         {
             get { return _denominationOfBanknotes; }
-            private set { _denominationOfBanknotes = value; }
+            set { _denominationOfBanknotes = value; }
         }
 
         private const int _maxCountOfBanknotes = 2500;
@@ -39,7 +39,7 @@ namespace ATM.Models
         public Cassette(Stack<Banknote> banknotes)
         {
             Banknotes = banknotes;
-            DenominationOfBanknotes = banknotes.FirstOrDefault().Denomination;
+            DenominationOfBanknotes = DenominationOfBanknotes == 0? banknotes.FirstOrDefault().Denomination : DenominationOfBanknotes;
         }
 
         public void AddBanknote(Banknote banknote)

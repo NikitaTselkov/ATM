@@ -45,7 +45,9 @@ namespace ATM.DataBase
 
         public static void EditCassettes(CassettesInfo info)
         {
-            foreach (var item in _dbContext.Cassettes.Local.ToList())
+            var cssettes = _dbContext.Cassettes.Local.ToList(); ////////
+
+            foreach (var item in cssettes)
             {
                 if (item.Denomination == info.Denomination)
                 {
