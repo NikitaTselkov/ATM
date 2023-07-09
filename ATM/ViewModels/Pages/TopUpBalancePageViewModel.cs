@@ -13,6 +13,7 @@ namespace ATM.ViewModels.Pages
     public class TopUpBalancePageViewModel : ViewModelBase
     {
         private readonly IRegionManager _regionManager;
+        private List<CassettesInfo> _banknotes;
 
         #region Commands
 
@@ -26,7 +27,12 @@ namespace ATM.ViewModels.Pages
 
         #endregion
 
-        public decimal Balance => UserAuthorization.GetBalance();
+        private decimal _balance = UserAuthorization.GetBalance();
+        public decimal Balance
+        {
+            get { return _balance; }
+            set { SetProperty(ref _balance, value); }
+        }
 
         private long _topUpAmount;
         public long TopUpAmount
@@ -38,6 +44,8 @@ namespace ATM.ViewModels.Pages
         public TopUpBalancePageViewModel(IRegionManager regionManager)
         {
             _regionManager = regionManager;
+            _banknotes = ATMStateModel.GetBanknotesFromUser();
+            TopUpAmount = _banknotes.Sum(s => s.Denomination * s.CountOfBanknotes);
         }
 
         private void ExecuteNavigateBackCommand()
@@ -47,7 +55,15 @@ namespace ATM.ViewModels.Pages
 
         private void ExecuteTopUpBalanceCommand()
         {
-            ATMStateModel.ConvertSumToBanknotes(TopUpAmount); //AddBanknoteForUsers(TopUpAmount);
+            foreach (var banknote in _banknotes)
+            {
+                for (int i = 0; i < banknote.CountOfBanknotes; i++)
+                {
+                    ATMStateModel.AddBanknoteForUsers(new Banknote(banknote.Denomination));
+                }
+            }
+
+            Balance = UserAuthorization.GetBalance();
         }
     }
 }

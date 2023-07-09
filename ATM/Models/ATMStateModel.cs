@@ -44,9 +44,9 @@ namespace ATM.Models
 
             Cassettes = new Stack<Cassette>();
 
-            _countAndDenominationOfBanknotes = GetCountAndDenominationOfBanknotes();
-
             FillCassettesRandomData();
+
+            _countAndDenominationOfBanknotes = GetCountAndDenominationOfBanknotes(); 
         }
 
         #region Удалить
@@ -57,7 +57,7 @@ namespace ATM.Models
 
             foreach (var cassette in Cassettes)
             {
-                cassettes.Add(new CassettesInfo { Denomination = cassette.Banknotes.Peek().Denomination, CountOfBanknotes = cassette.CountOfBanknotes });
+                cassettes.Add(new CassettesInfo { Denomination = cassette.DenominationOfBanknotes, CountOfBanknotes = cassette.CountOfBanknotes });
             }
 
             return cassettes;
@@ -127,7 +127,59 @@ namespace ATM.Models
             if (CassettForUsers is null)
                 CassettForUsers = new Cassette(new Stack<Banknote>());
 
-            CassettForUsers.Banknotes.Push(banknote);
+            CassettForUsers.AddBanknote(banknote);
+
+            var userCard = UserAuthorization.GetAutorizatedCard();
+            userCard.AddMoneyToUsersCard(banknote.Denomination);
+        }
+
+        /// <summary>
+        /// Get banknotes from user (For Debuging)
+        /// </summary>
+        /// <returns></returns>
+        public static List<CassettesInfo> GetBanknotesFromUser()
+        {
+            var denominations = new HashSet<int>();
+            denominations.Add(5000);
+            denominations.Add(2000);
+            denominations.Add(1000);
+            denominations.Add(500);
+            denominations.Add(100);
+            denominations.Add(50);
+
+            var banknotes = new List<CassettesInfo>();
+
+            foreach (var item in denominations)
+            {
+                banknotes.Add(new CassettesInfo() { Denomination = item, CountOfBanknotes = new Random().Next(1, 10) });
+            }
+
+            return banknotes;
+        }
+
+        public static void RemoveBanknoteByDenomination(int denomination)
+        {
+            if (Cassettes is null)
+                throw new ArgumentNullException();
+
+            foreach (var cassett in Cassettes)
+            {
+               var tmp = cassett.Banknotes.FirstOrDefault(f => f.Denomination == denomination);
+
+                if (tmp.Denomination != 0)
+                {
+                    cassett.RemoveBanknote(1);
+                    var userCard = UserAuthorization.GetAutorizatedCard();
+                    userCard.RemoveMoneyFromUsersCard(denomination);
+                    _countAndDenominationOfBanknotes = GetCountAndDenominationOfBanknotes();
+                    break;
+                }
+            }
+        }
+
+        public static bool IsDenominationsExist(int denomination)
+        {
+           return _countAndDenominationOfBanknotes.First(f => f.Denomination == denomination).CountOfBanknotes > 0;
         }
 
         public static List<CassettesInfo> ConvertSumToBanknotes(long sum)
@@ -161,7 +213,7 @@ namespace ATM.Models
                 {
                     tmp = banknotes.First(s => s.Denomination == denomination);
 
-                    if (sum - denomination > 0 && tmp.CountOfBanknotes > 0)
+                    if (sum - denomination >= 0 && tmp.CountOfBanknotes > 0)
                     {
                         sum -= denomination;
                         banknotes.First(s => s.Denomination == denomination).CountOfBanknotes--;

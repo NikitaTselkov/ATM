@@ -27,6 +27,7 @@ namespace ATM.Modules
             containerRegistry.RegisterForNavigation<BalancePage>();
             containerRegistry.RegisterForNavigation<CurrentStatePage>();
             containerRegistry.RegisterForNavigation<TopUpBalancePage>();
+            containerRegistry.RegisterForNavigation<WithdrawMoneyPage>();
             containerRegistry.RegisterForNavigation<AutorizationPage>();
         }
     }

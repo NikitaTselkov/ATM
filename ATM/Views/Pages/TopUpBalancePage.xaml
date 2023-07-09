@@ -17,7 +17,7 @@
 
             <TextBlock Text="{Binding StringFormat=Your balance is {0} rub, Path=Balance}" FontSize="25" />
 
-            <TextBox Height="30" Text="{Binding TopUpAmount}" FontSize="20" TextAlignment="Center" />
+            <TextBlock Height="30" Text="{Binding TopUpAmount}" FontSize="20" TextAlignment="Center" />
 
             <Button Command="{Binding TopUpBalanceCommand}" Margin="0 20 0 0" Height="60" Width="200" Content="Top up balance" FontSize="20" />
 

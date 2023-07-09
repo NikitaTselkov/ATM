@@ -13,11 +13,16 @@ namespace ATM.Models
         public static CardOfUser AutorizationOfUsersCard(long number, short passwprd)
         {
             var user = new CardOfUser(number, passwprd);
-            user.SetMoneyToUsersCard(new Random().Next(10, 1000000));
+            user.AddMoneyToUsersCard(new Random().Next(10, 1000000));
 
             _autorizatedUsersCard = user;
 
             return user;
+        }
+
+        public static CardOfUser GetAutorizatedCard()
+        {
+            return _autorizatedUsersCard;
         }
 
         public static decimal GetBalance()

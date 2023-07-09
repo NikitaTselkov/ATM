@@ -23,9 +23,14 @@ namespace ATM.Models
             Pincode = pincode;
         }
 
-        public void SetMoneyToUsersCard(decimal money)
+        public void AddMoneyToUsersCard(decimal money)
         {
             Balance += money;
+        }
+
+        public void RemoveMoneyFromUsersCard(decimal money)
+        {
+            Balance -= money;
         }
     }
 }
