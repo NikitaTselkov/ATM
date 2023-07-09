@@ -21,6 +21,14 @@
 
         <Button Style="{StaticResource NavigateBackButton}" Command="{Binding NavigateBackCommand}" />
 
+        <StackPanel HorizontalAlignment="Right" VerticalAlignment="Top" Margin="10">
+
+            <TextBlock Text="{Binding StringFormat=balance of ATM is {0} rub, Path=ATMBalance}" FontSize="10" />
+
+            <Button Height="30" Content="Top up ATM" Command="{Binding TopUpATMCommand}" />
+
+        </StackPanel>
+
         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
 
             <TextBlock Text="{Binding StringFormat=Your balance is {0} rub, Path=Balance}" FontSize="25" />

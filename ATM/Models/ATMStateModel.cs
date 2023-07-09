@@ -56,6 +56,17 @@ namespace ATM.Models
             return result;
         }
 
+        public static void AddBanknote(Banknote banknote)
+        {
+            foreach (var cassette in Cassettes)
+            {
+                if (cassette.DenominationOfBanknotes == banknote.Denomination)
+                {
+                    cassette.AddBanknote(banknote);
+                }
+            }
+        }
+
         public static void AddBanknoteForUsers(Banknote banknote)
         {
             if (CassettForUsers is null)

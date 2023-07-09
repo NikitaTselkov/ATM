@@ -1,4 +1,5 @@
-﻿using ATM.Models;
+﻿using ATM.DataBase;
+using ATM.Models;
 using Core;
 using Prism.Commands;
 using Prism.Regions;
@@ -29,6 +30,10 @@ namespace ATM.ViewModels.Pages
         public DelegateCommand LoadedCommand =>
             _loadedCommand ?? (_loadedCommand = new DelegateCommand(ExecuteLoadedCommand));
 
+        private DelegateCommand _topUpATMCommand;
+        public DelegateCommand TopUpATMCommand =>
+            _topUpATMCommand ?? (_topUpATMCommand = new DelegateCommand(ExecuteTopUpATMCommand));
+
         #endregion
 
         private long _balance = UserAuthorization.GetBalance();
@@ -36,6 +41,13 @@ namespace ATM.ViewModels.Pages
         {
             get { return _balance; }
             set { SetProperty(ref _balance, value); }
+        }
+
+        private long _aTMBalance;
+        public long ATMBalance
+        {
+            get { return _aTMBalance; }
+            set { SetProperty(ref _aTMBalance, value); }
         }
 
         private long _topUpAmount;
@@ -60,6 +72,7 @@ namespace ATM.ViewModels.Pages
         private void ExecuteLoadedCommand()
         {
             Balance = UserAuthorization.GetBalance();
+            ATMBalance = ATMStateModel.GetAllMoney();
         }
 
         private void ExecuteTopUpBalanceCommand()
@@ -73,6 +86,21 @@ namespace ATM.ViewModels.Pages
             }
 
             Balance = UserAuthorization.GetBalance();
+        }
+
+        private void ExecuteTopUpATMCommand()
+        {
+            foreach (var banknote in _banknotes)
+            {
+                for (int i = 0; i < banknote.CountOfBanknotes; i++)
+                {
+                    ATMStateModel.AddBanknote(new Banknote(banknote.Denomination));
+                }
+
+                DataBaseControll.EditCassettes(banknote);
+            }
+
+            ATMBalance = ATMStateModel.GetAllMoney();
         }
     }
 }

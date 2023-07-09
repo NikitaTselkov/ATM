@@ -14,7 +14,7 @@ namespace ATM.ViewModels.Pages
     public class CurrentStatePageViewModel : ViewModelBase
     {
         private readonly IRegionManager _regionManager;
-
+        
         private long _totalMoney;
         public long TotalMoney
         {
@@ -50,7 +50,7 @@ namespace ATM.ViewModels.Pages
         {
             _regionManager.RequestNavigate(RegionNames.MainPage, PageNames.MainPage);
         }
-
+        
         private void ExecuteLoadedCommand()
         {
             TotalMoney = ATMStateModel.GetAllMoney();

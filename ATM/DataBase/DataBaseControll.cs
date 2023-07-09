@@ -29,9 +29,7 @@ namespace ATM.DataBase
             var cassettes = new List<Cassette>();
             var cassette = new Cassette(new Stack<Banknote>());
 
-            var t = _dbContext.Cassettes.Local.ToList();
-
-            foreach (var item in t)
+            foreach (var item in _dbContext.Cassettes.Local.ToList())
             {
                 for (int i = 0; i < item.CountOfBanknotes; i++)
                 {
@@ -43,6 +41,19 @@ namespace ATM.DataBase
             }
 
             return cassettes;
+        }
+
+        public static void EditCassettes(CassettesInfo info)
+        {
+            foreach (var item in _dbContext.Cassettes.Local.ToList())
+            {
+                if (item.Denomination == info.Denomination)
+                {
+                    item.CountOfBanknotes += info.CountOfBanknotes;
+                    _dbContext.SaveChanges();
+                    break;
+                }
+            }
         }
 
         public static void AddCassettes(CassettesInfo info)
