@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 
 namespace ATM.Models
 {
@@ -37,10 +38,19 @@ namespace ATM.Models
 
         private const int _maxCountOfCassettes = 6;
 
+        private static readonly HashSet<int> _denominations = new() { 5000, 2000, 1000, 500, 100, 50 };
+
         static ATMStateModel()
         {
             Cassettes = new Stack<Cassette>(DataBaseControll.GetCassettes());
+
+            if (Cassettes.Count == 0)
+                InitCassettes();
+
             _countAndDenominationOfBanknotes = DataBaseControll.GetCountAndDenominationOfBanknotes().ToList();
+
+            if (_countAndDenominationOfBanknotes.Count == 0)
+                InitCountAndDenominationOfBanknotes();
         }
 
         public static long GetAllMoney()
@@ -65,6 +75,8 @@ namespace ATM.Models
                     cassette.AddBanknote(banknote);
                 }
             }
+
+            _countAndDenominationOfBanknotes = DataBaseControll.GetCountAndDenominationOfBanknotes().ToList();
         }
 
         public static void AddBanknoteForUsers(Banknote banknote)
@@ -84,17 +96,9 @@ namespace ATM.Models
         /// <returns></returns>
         public static List<CassettesInfo> GetBanknotesFromUser()
         {
-            var denominations = new HashSet<int>();
-            denominations.Add(5000);
-            denominations.Add(2000);
-            denominations.Add(1000);
-            denominations.Add(500);
-            denominations.Add(100);
-            denominations.Add(50);
-
             var banknotes = new List<CassettesInfo>();
 
-            foreach (var item in denominations)
+            foreach (var item in _denominations)
             {
                 banknotes.Add(new CassettesInfo() { Denomination = item, CountOfBanknotes = new Random().Next(1, 10) });
             }
@@ -183,6 +187,26 @@ namespace ATM.Models
             }
 
             return banknotes.Where(s => s.CountOfBanknotes != 0).ToList();
+        }
+
+        private static void InitCassettes()
+        {
+            foreach (var item in _denominations)
+            {
+                var cassette = new Cassette(new Stack<Banknote>());
+                cassette.DenominationOfBanknotes = item;
+                Cassettes.Push(cassette);
+            }
+        }
+
+        private static void InitCountAndDenominationOfBanknotes()
+        {
+            foreach (var item in _denominations)
+            {
+                var info = new CassettesInfo() { Denomination = item, CountOfBanknotes = 0 };
+                _countAndDenominationOfBanknotes.Add(info);
+                DataBaseControll.AddCassettes(info);
+            }
         }
     }
 }
