@@ -82,7 +82,7 @@ namespace ATM.ViewModels.Pages
             try
             {
                 if (WithdrawalAmount > Balance)
-                    throw new ArgumentOutOfRangeException();
+                    throw new ArgumentOutOfRangeException("Insufficient funds");
 
                 var selectedDenomination = Denominations.FirstOrDefault(s => s.IsChecked)?.Denomination;
 
@@ -95,6 +95,10 @@ namespace ATM.ViewModels.Pages
                 if (selectedDenomination == 0)
                 {
                     var banknotes = ATMStateModel.ConvertSumToBanknotes(WithdrawalAmount);
+
+                    if(banknotes.Count == 0)
+                        throw new Exception($"The ATM cannot dispense this amount");
+
                     foreach (var item in banknotes)
                     {
                         for (int i = 0; i < item.CountOfBanknotes; i++)
@@ -126,12 +130,10 @@ namespace ATM.ViewModels.Pages
         {
             Denominations = new List<DenominationsBindingHelper>();
 
-            Denominations.Add(new DenominationsBindingHelper(50, false));
-            Denominations.Add(new DenominationsBindingHelper(100, false));
-            Denominations.Add(new DenominationsBindingHelper(500, false));
-            Denominations.Add(new DenominationsBindingHelper(1000, false));
-            Denominations.Add(new DenominationsBindingHelper(2000, false));
-            Denominations.Add(new DenominationsBindingHelper(5000, false));
+            foreach (var denomination in ATMStateModel.Denominations) 
+            {
+                Denominations.Add(new DenominationsBindingHelper(denomination, false));
+            }
         }
 
         public class DenominationsBindingHelper

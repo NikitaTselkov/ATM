@@ -54,7 +54,7 @@ namespace ATM.ViewModels.Pages
         private void ExecuteLoadedCommand()
         {
             TotalMoney = ATMStateModel.GetAllMoney();
-            Cassettes = ATMStateModel.CountAndDenominationOfBanknotes;
+            Cassettes = ATMStateModel.GetCountAndDenominationOfBanknotes();
         }
     }
 }

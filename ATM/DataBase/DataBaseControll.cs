@@ -8,11 +8,11 @@ using System.Threading.Tasks;
 
 namespace ATM.DataBase
 {
-    public static class DataBaseControll
+    public static class DataBaseControl
     {
         private static DataBaseContext _dbContext;
 
-        static DataBaseControll()
+        static DataBaseControl()
         {
             _dbContext = new DataBaseContext();
             _dbContext.Database.EnsureCreated();
@@ -27,17 +27,17 @@ namespace ATM.DataBase
         public static IEnumerable<Cassette> GetCassettes()
         {
             var cassettes = new List<Cassette>();
-            var cassette = new Cassette(new Stack<Banknote>());
 
             foreach (var item in _dbContext.Cassettes.Local.ToList())
             {
+                var cassette = new Cassette(new Stack<Banknote>(), item.Denomination);
+
                 for (int i = 0; i < item.CountOfBanknotes; i++)
                 {
                     cassette.AddBanknote(new Banknote(item.Denomination));
                 }
 
                 cassettes.Add(cassette);
-                cassette = new Cassette(new Stack<Banknote>());
             }
 
             return cassettes;
@@ -45,9 +45,9 @@ namespace ATM.DataBase
 
         public static void EditCassettes(CassettesInfo info)
         {
-            var cssettes = _dbContext.Cassettes.Local.ToList(); ////////
+            var cassettes = _dbContext.Cassettes.Local.ToList();
 
-            foreach (var item in cssettes)
+            foreach (var item in cassettes)
             {
                 if (item.Denomination == info.Denomination)
                 {
@@ -69,12 +69,12 @@ namespace ATM.DataBase
         {
             var cassettes = _dbContext.Cassettes.Local.ToList();
 
-            foreach (var cassett in cassettes)
+            foreach (var cassette in cassettes)
             {
-                if (cassett.Denomination == denomination)
+                if (cassette.Denomination == denomination)
                 {
-                    if (cassett.CountOfBanknotes - 1 > 0)
-                        cassett.CountOfBanknotes--;
+                    if (cassette.CountOfBanknotes - 1 >= 0)
+                        cassette.CountOfBanknotes--;
                 }
             }
             _dbContext.SaveChanges();
@@ -84,12 +84,12 @@ namespace ATM.DataBase
         {
             var cassettes = _dbContext.Cassettes.Local.ToList();
 
-            foreach (var cassett in cassettes)
+            foreach (var cassette in cassettes)
             {
-                if (cassett.Denomination == denomination)
+                if (cassette.Denomination == denomination)
                 {
-                    if (cassett.CountOfBanknotes - countOfBanknotes > 0)
-                        cassett.CountOfBanknotes -= countOfBanknotes;
+                    if (cassette.CountOfBanknotes - countOfBanknotes >= 0)
+                        cassette.CountOfBanknotes -= countOfBanknotes;
                 }
             }
             _dbContext.SaveChanges();

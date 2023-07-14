@@ -37,7 +37,7 @@ namespace ATM.ViewModels.Pages
         {
             //TODO: Проверка в BD пароля
 
-            UserAuthorization.AutorizationOfUsersCard(1234567891012131, 1243);
+            UserAuthorization.AuthorizationOfUsersCard(1234567891012131, 1243);
 
             _regionManager.RequestNavigate(RegionNames.MainPage, _nextLink);
         }

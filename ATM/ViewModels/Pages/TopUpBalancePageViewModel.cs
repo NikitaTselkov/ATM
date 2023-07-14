@@ -97,7 +97,7 @@ namespace ATM.ViewModels.Pages
                     ATMStateModel.AddBanknote(new Banknote(banknote.Denomination));
                 }
 
-                DataBaseControll.EditCassettes(banknote);
+                DataBaseControl.EditCassettes(banknote);
             }
 
             ATMBalance = ATMStateModel.GetAllMoney();

@@ -8,10 +8,10 @@ namespace ATM.Models
     public class Cassette
     {
         private Stack<Banknote> _banknotes = new Stack<Banknote>();
-        public Stack<Banknote> Banknotes
+        private Stack<Banknote> Banknotes
         {
             get { return _banknotes; }
-            private set
+            set
             {
                 if (value.Count > _maxCountOfBanknotes)
                     throw new ArgumentOutOfRangeException($"Count of Banknotes cannot be more than {_maxCountOfBanknotes}");
@@ -19,27 +19,17 @@ namespace ATM.Models
             }
         }
 
-        private int _countOfBanknotes;
-        public int CountOfBanknotes
-        {
-            get { return _countOfBanknotes; }
-            private set { _countOfBanknotes = value; }
-        }
+        public int CountOfBanknotes { get; private set; }
 
-        private int _denominationOfBanknotes;
-        public int DenominationOfBanknotes
-        {
-            get { return _denominationOfBanknotes; }
-            set { _denominationOfBanknotes = value; }
-        }
+        public int? DenominationOfBanknotes { get; init; }
 
         private const int _maxCountOfBanknotes = 2500;
 
 
-        public Cassette(Stack<Banknote> banknotes)
+        public Cassette(Stack<Banknote> banknotes, int? denomination = default)
         {
             Banknotes = banknotes;
-            DenominationOfBanknotes = DenominationOfBanknotes == 0? banknotes.FirstOrDefault().Denomination : DenominationOfBanknotes;
+            DenominationOfBanknotes = denomination;
         }
 
         public void AddBanknote(Banknote banknote)
@@ -47,14 +37,14 @@ namespace ATM.Models
             if (Banknotes is null)
                 Banknotes = new Stack<Banknote>();
 
+            if (DenominationOfBanknotes != null && DenominationOfBanknotes != banknote.Denomination)
+                throw new FormatException();
+
             if(_maxCountOfBanknotes < CountOfBanknotes)
                 throw new ArgumentOutOfRangeException($"countOfBanknotes cannot be more than {_maxCountOfBanknotes}");
 
             Banknotes.Push(banknote);
             CountOfBanknotes++;
-
-            if (DenominationOfBanknotes == default)
-                DenominationOfBanknotes = banknote.Denomination;
         }
 
         public void RemoveBanknote(int countOfBanknotes)
@@ -65,7 +55,7 @@ namespace ATM.Models
             if (countOfBanknotes < 0)
                 throw new ArgumentOutOfRangeException("countOfBanknotes cannot be less than 0");
 
-            if (countOfBanknotes > Banknotes.Count)
+            if (countOfBanknotes > CountOfBanknotes)
                 throw new ArgumentOutOfRangeException("Not enough banknotes to dispense");
 
             for (int i = 0; i < countOfBanknotes; i++)

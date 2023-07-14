@@ -2,17 +2,16 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 
 namespace ATM.Models
 {
     public static class ATMStateModel
     {
         private static Stack<Cassette> _cassettes;
-        public static Stack<Cassette> Cassettes
+        private static Stack<Cassette> Cassettes
         {
             get { return _cassettes; }
-            private set
+            set
             {
                 if (value.Count > _maxCountOfCassettes)
                     throw new ArgumentOutOfRangeException($"Count of Cassettes cannot be more than {_maxCountOfCassettes}");
@@ -20,37 +19,32 @@ namespace ATM.Models
             }
         }
 
-        private static Cassette _cassettForUsers;
-        public static Cassette CassettForUsers
-        {
-            get { return _cassettForUsers; }
-            private set{ _cassettForUsers = value; }
-        }
+        public static Cassette CassetteForUsers { get; private set; }
 
-        private static List<CassettesInfo> _countAndDenominationOfBanknotes;
-        public static List<CassettesInfo> CountAndDenominationOfBanknotes
-        {
-            get { return _countAndDenominationOfBanknotes; }
-            private set { _countAndDenominationOfBanknotes = value; }
-        }
+        private static List<CassettesInfo> _countAndDenominationOfBanknotes { get; set; }
 
         public static int CountOfCassettes => Cassettes.Count;
 
-        private const int _maxCountOfCassettes = 6;
+        public static readonly HashSet<int> Denominations = new() { 50, 100, 500, 1000, 2000, 5000 };
 
-        private static readonly HashSet<int> _denominations = new() { 5000, 2000, 1000, 500, 100, 50 };
+        private const int _maxCountOfCassettes = 6;
 
         static ATMStateModel()
         {
-            Cassettes = new Stack<Cassette>(DataBaseControll.GetCassettes());
+            Cassettes = new Stack<Cassette>(DataBaseControl.GetCassettes());
 
             if (Cassettes.Count == 0)
                 InitCassettes();
 
-            _countAndDenominationOfBanknotes = DataBaseControll.GetCountAndDenominationOfBanknotes().ToList();
+            _countAndDenominationOfBanknotes = DataBaseControl.GetCountAndDenominationOfBanknotes().ToList();
 
             if (_countAndDenominationOfBanknotes.Count == 0)
                 InitCountAndDenominationOfBanknotes();
+        }
+
+        public static List<CassettesInfo> GetCountAndDenominationOfBanknotes()
+        {         
+            return new List<CassettesInfo>(_countAndDenominationOfBanknotes);
         }
 
         public static long GetAllMoney()
@@ -59,8 +53,8 @@ namespace ATM.Models
 
             foreach (var cassette in Cassettes)
             {
-                if(cassette.CountOfBanknotes > 0)
-                    result += cassette.Banknotes.Peek().Denomination * cassette.CountOfBanknotes;
+                if (cassette.CountOfBanknotes > 0)
+                    result +=  (long)cassette.DenominationOfBanknotes * cassette.CountOfBanknotes;
             }
 
             return result;
@@ -76,29 +70,29 @@ namespace ATM.Models
                 }
             }
 
-            _countAndDenominationOfBanknotes = DataBaseControll.GetCountAndDenominationOfBanknotes().ToList();
+            _countAndDenominationOfBanknotes = DataBaseControl.GetCountAndDenominationOfBanknotes().ToList();
         }
 
         public static void AddBanknoteForUsers(Banknote banknote)
         {
-            if (CassettForUsers is null)
-                CassettForUsers = new Cassette(new Stack<Banknote>());
+            if (CassetteForUsers is null)
+                CassetteForUsers = new Cassette(new Stack<Banknote>());
 
-            CassettForUsers.AddBanknote(banknote);
+            CassetteForUsers.AddBanknote(banknote);
 
             var userCard = UserAuthorization.GetAutorizatedCard();
             userCard.AddMoneyToUsersCard(banknote.Denomination);
         }
 
         /// <summary>
-        /// Get banknotes from user (For Debuging)
+        /// Get banknotes from user (For Debugging)
         /// </summary>
         /// <returns></returns>
         public static List<CassettesInfo> GetBanknotesFromUser()
         {
             var banknotes = new List<CassettesInfo>();
 
-            foreach (var item in _denominations)
+            foreach (var item in Denominations)
             {
                 banknotes.Add(new CassettesInfo() { Denomination = item, CountOfBanknotes = new Random().Next(1, 10) });
             }
@@ -111,20 +105,17 @@ namespace ATM.Models
             if (Cassettes is null)
                 throw new ArgumentNullException();
 
-            foreach (var cassett in Cassettes)
-            {
-               var tmp = cassett.Banknotes.FirstOrDefault(f => f.Denomination == denomination);
+            var cassette = Cassettes.SingleOrDefault(f => f.DenominationOfBanknotes == denomination);
 
-                if (tmp.Denomination != 0)
-                {
-                    cassett.RemoveBanknote(1);
-                    var userCard = UserAuthorization.GetAutorizatedCard();
-                    userCard.RemoveMoneyFromUsersCard(denomination);
-                    _countAndDenominationOfBanknotes = DataBaseControll.GetCountAndDenominationOfBanknotes().ToList();
-                    DataBaseControll.DeleteCassettes(denomination);
-                    break;
-                }
+            if (cassette != null)
+            {
+                cassette.RemoveBanknote(1);
+                var userCard = UserAuthorization.GetAutorizatedCard();
+                userCard.RemoveMoneyFromUsersCard(denomination);
+                _countAndDenominationOfBanknotes = DataBaseControl.GetCountAndDenominationOfBanknotes().ToList();
+                DataBaseControl.DeleteCassettes(denomination);
             }
+            
         }
 
         public static bool IsDenominationsEnough(int denomination, long sum)
@@ -136,39 +127,28 @@ namespace ATM.Models
 
         public static bool IsDenominationsExist(int denomination)
         {
-           return _countAndDenominationOfBanknotes.First(f => f.Denomination == denomination).CountOfBanknotes > 0;
+            return _countAndDenominationOfBanknotes.First(f => f.Denomination == denomination).CountOfBanknotes > 0;
         }
 
         public static List<CassettesInfo> ConvertSumToBanknotes(long sum)
         {
-            if(_countAndDenominationOfBanknotes.Count == 0)
-                _countAndDenominationOfBanknotes = DataBaseControll.GetCountAndDenominationOfBanknotes().ToList();
+            if (_countAndDenominationOfBanknotes.Count == 0)
+                _countAndDenominationOfBanknotes = DataBaseControl.GetCountAndDenominationOfBanknotes().ToList();
 
-            var denominations = new HashSet<int>();
-            denominations.Add(5000);
-            denominations.Add(2000);
-            denominations.Add(1000);
-            denominations.Add(500);
-            denominations.Add(100);
-            denominations.Add(50);
-
-            var banknotes = new List<CassettesInfo>();
-
-            foreach (var item in denominations)
-            {
-                banknotes.Add(new CassettesInfo() { Denomination = item, CountOfBanknotes = _countAndDenominationOfBanknotes.First(s => s.Denomination == item).CountOfBanknotes });
-            }
-
+            var banknotes = Denominations.Select(item => new CassettesInfo() { Denomination = item, CountOfBanknotes = _countAndDenominationOfBanknotes.Single(s => s.Denomination == item).CountOfBanknotes }).ToList();
             CassettesInfo tmp;
+            long previousSum = 0;
 
-            while (sum > denominations.Last())
+            while (sum >= Denominations.Min() && previousSum != sum)
             {
-                if (banknotes.Last().CountOfBanknotes == 0)
-                    throw new ArgumentOutOfRangeException("Not enough banknots");
+                if (banknotes.All(a => a.CountOfBanknotes == 0))
+                    throw new ArgumentOutOfRangeException("Not enough banknotes");
 
-                foreach (var denomination in denominations)
+                previousSum = sum;
+
+                foreach (var denomination in Denominations.OrderByDescending(o => o))
                 {
-                    tmp = banknotes.First(s => s.Denomination == denomination);
+                    tmp = banknotes.Single(s => s.Denomination == denomination);
 
                     if (sum - denomination >= 0 && tmp.CountOfBanknotes > 0)
                     {
@@ -178,6 +158,8 @@ namespace ATM.Models
                     }
                 }
             }
+
+            if (sum != 0) return new List<CassettesInfo>();
 
             CassettesInfo currentItem;
             foreach (var item in _countAndDenominationOfBanknotes)
@@ -191,21 +173,23 @@ namespace ATM.Models
 
         private static void InitCassettes()
         {
-            foreach (var item in _denominations)
+            foreach (var item in Denominations)
             {
-                var cassette = new Cassette(new Stack<Banknote>());
-                cassette.DenominationOfBanknotes = item;
+                var cassette = new Cassette(new Stack<Banknote>(), item)
+                {
+                    DenominationOfBanknotes = item
+                };
                 Cassettes.Push(cassette);
             }
         }
 
         private static void InitCountAndDenominationOfBanknotes()
         {
-            foreach (var item in _denominations)
+            foreach (var item in Denominations)
             {
                 var info = new CassettesInfo() { Denomination = item, CountOfBanknotes = 0 };
                 _countAndDenominationOfBanknotes.Add(info);
-                DataBaseControll.AddCassettes(info);
+                DataBaseControl.AddCassettes(info);
             }
         }
     }
